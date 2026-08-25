@@ -1,0 +1,14 @@
+{
+  "name": "Budget Over 80% - Warning Email",
+  "nodes": [
+    {"parameters": {"path": "budget-threshold", "httpMethod": "POST"}, "id": "budget-threshold", "name": "Budget > 80%", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [260, 300]},
+    {"parameters": {"conditions": {"number": [{"value1": "={{ $json.spent / $json.budget * 100 }}", "operation": "largerEqual", "value2": 80}]}}, "id": "budget-check", "name": "Threshold Check", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [500, 300]},
+    {"parameters": {"fromEmail": "travel-guardian@example.com", "toEmail": "={{ $json.email }}", "subject": "Travel budget warning", "text": "Your trip budget is above 80%. Review your expenses before booking more."}, "id": "warning-email", "name": "Warning Email", "type": "n8n-nodes-base.emailSend", "typeVersion": 2, "position": [760, 220]}
+  ],
+  "connections": {"Budget > 80%": {"main": [[{"node": "Threshold Check", "type": "main", "index": 0}]]}, "Threshold Check": {"main": [[{"node": "Warning Email", "type": "main", "index": 0}], []]}},
+  "active": false,
+  "settings": {},
+  "versionId": "budget-warning-v1",
+  "meta": {"templateCredsSetupCompleted": false},
+  "tags": []
+}

@@ -1,0 +1,4 @@
+import { AlertTriangle, BadgeIndianRupee } from 'lucide-react'
+
+const scams = [['Unmetered tuk-tuk rides','Agree on the fare or ask for the meter before getting in.'],['Fake monument guides','Use the official ticket counter and registered guides at major forts.'],['Gemstone pressure sales','Skip high-pressure deals and keep valuables out of sight.'],['Closed attraction detours','Verify opening hours before accepting a driver’s alternative.']]
+export default function Scams() { return <><div className="page-heading"><div><p className="eyebrow">Local context</p><h1>Scam alerts</h1><p className="page-subtitle">Common scams in Jaipur, with a practical response for each.</p></div></div><section className="panel scam-list">{scams.map(([title, advice]) => <article className="scam-row" key={title}><AlertTriangle size={19} /><div><h3>{title}</h3><p>{advice}</p></div><BadgeIndianRupee size={18} className="scam-money" /></article>)}</section></> }

@@ -1,0 +1,14 @@
+{
+  "name": "Trip Completed - Generate Travel Journal",
+  "nodes": [
+    {"parameters": {"path": "trip-completed", "httpMethod": "POST"}, "id": "trip-completed", "name": "Trip Completed", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [260, 300]},
+    {"parameters": {"method": "POST", "url": "http://host.docker.internal:8001/api/journal", "sendBody": true, "specifyBody": "json", "jsonBody": "={{ JSON.stringify($json) }}"}, "id": "generate-journal", "name": "Generate Travel Journal", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4, "position": [560, 300]},
+    {"parameters": {"operation": "toText", "sourceProperty": "journal", "destinationProperty": "journal.txt"}, "id": "save-journal", "name": "Save Journal", "type": "n8n-nodes-base.moveBinaryData", "typeVersion": 1, "position": [820, 300]}
+  ],
+  "connections": {"Trip Completed": {"main": [[{"node": "Generate Travel Journal", "type": "main", "index": 0}]]}, "Generate Travel Journal": {"main": [[{"node": "Save Journal", "type": "main", "index": 0}]]}},
+  "active": false,
+  "settings": {},
+  "versionId": "trip-completed-v1",
+  "meta": {"templateCredsSetupCompleted": false},
+  "tags": []
+}

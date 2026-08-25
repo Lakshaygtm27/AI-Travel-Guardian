@@ -1,0 +1,14 @@
+{
+  "name": "Trip Created - Generate PDF - Email User",
+  "nodes": [
+    {"parameters": {"path": "trip-created", "httpMethod": "POST"}, "id": "trip-created", "name": "Trip Created", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [260, 300]},
+    {"parameters": {"method": "POST", "url": "http://host.docker.internal:8001/api/trips/pdf", "sendBody": true, "specifyBody": "json", "jsonBody": "={{ JSON.stringify($json) }}"}, "id": "generate-pdf", "name": "Generate PDF", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4, "position": [520, 300]},
+    {"parameters": {"fromEmail": "travel-guardian@example.com", "toEmail": "={{ $json.email }}", "subject": "Your AI Travel Guardian itinerary", "text": "Your itinerary is ready. The generated PDF is attached.", "attachments": "data"}, "id": "email-user", "name": "Email User", "type": "n8n-nodes-base.emailSend", "typeVersion": 2, "position": [800, 300]}
+  ],
+  "connections": {"Trip Created": {"main": [[{"node": "Generate PDF", "type": "main", "index": 0}]]}, "Generate PDF": {"main": [[{"node": "Email User", "type": "main", "index": 0}]]}},
+  "active": false,
+  "settings": {},
+  "versionId": "trip-created-v1",
+  "meta": {"templateCredsSetupCompleted": false},
+  "tags": []
+}

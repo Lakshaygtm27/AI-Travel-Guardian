@@ -1,0 +1,14 @@
+{
+  "name": "Weather Alert - Send Notification",
+  "nodes": [
+    {"parameters": {"path": "weather-alert", "httpMethod": "POST"}, "id": "weather-alert", "name": "Weather Alert", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [260, 300]},
+    {"parameters": {"conditions": {"number": [{"value1": "={{ $json.rain }}", "operation": "largerEqual", "value2": 60}]}}, "id": "rain-check", "name": "Rain probability >= 60%", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [500, 300]},
+    {"parameters": {"fromEmail": "travel-guardian@example.com", "toEmail": "={{ $json.email }}", "subject": "Weather alert for your trip", "text": "Rain expected tomorrow. Replace outdoor visit with museum visit."}, "id": "send-notification", "name": "Send Notification", "type": "n8n-nodes-base.emailSend", "typeVersion": 2, "position": [760, 220]}
+  ],
+  "connections": {"Weather Alert": {"main": [[{"node": "Rain probability >= 60%", "type": "main", "index": 0}]]}, "Rain probability >= 60%": {"main": [[{"node": "Send Notification", "type": "main", "index": 0}], []]}},
+  "active": false,
+  "settings": {},
+  "versionId": "weather-alert-v1",
+  "meta": {"templateCredsSetupCompleted": false},
+  "tags": []
+}
