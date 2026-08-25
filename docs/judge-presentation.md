@@ -1,4 +1,6 @@
-# AI Travel Guardian: Judge Presentation
+# AI Travel Guardian 360: Judge Presentation
+
+**An AI-Powered Tourism Intelligence Platform**
 
 ## 1. Problem
 Travelers make decisions across disconnected apps while risk, budget, weather, and emergency context change during a trip.

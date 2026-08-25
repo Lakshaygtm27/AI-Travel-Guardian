@@ -58,7 +58,12 @@ class WeatherRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return {"message": "AI Travel Guardian"}
+    return {"message": "AI Travel Guardian 360"}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "service": "AI Travel Guardian 360"}
 
 
 @app.post("/api/itinerary")
