@@ -3,8 +3,8 @@ import { MapPinned } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
 import { useState } from 'react'
 
-const points = { Attractions: [{ name: 'Hawa Mahal', position: [26.9239, 75.8267], cost: '₹200', rating: '4.5', distance: '1.2 km' }, { name: 'City Palace', position: [26.9258, 75.8237], cost: '₹300', rating: '4.6', distance: '1.8 km' }], Hotels: [{ name: 'Rambagh Palace', position: [26.8915, 75.8067], cost: '₹18,000/night', rating: '4.8', distance: '4.6 km' }], Hospitals: [{ name: 'Sawai Man Singh Hospital', position: [26.9005, 75.8056], cost: 'Emergency 24/7', rating: '4.1', distance: '3.8 km' }], 'Police Stations': [{ name: 'Ashok Nagar Police Station', position: [26.9092, 75.7956], cost: 'Emergency 24/7', rating: '4.0', distance: '2.9 km' }] }
-const colors = { Attractions: '#e9785f', Hotels: '#20a39e', Hospitals: '#d64b61', 'Police Stations': '#3b6ea5' }
+const points = { Attractions: [{ name: 'Hawa Mahal', position: [26.9239, 75.8267], cost: '₹200', rating: '4.5', distance: '1.2 km' }, { name: 'City Palace', position: [26.9258, 75.8237], cost: '₹300', rating: '4.6', distance: '1.8 km' }], Hotels: [{ name: 'Rambagh Palace', position: [26.8915, 75.8067], cost: '₹18,000/night', rating: '4.8', distance: '4.6 km' }], Hospitals: [{ name: 'Sawai Man Singh Hospital', position: [26.9005, 75.8056], cost: 'Emergency 24/7', rating: '4.1', distance: '3.8 km' }], 'Police Stations': [{ name: 'Ashok Nagar Police Station', position: [26.9092, 75.7956], cost: 'Emergency 24/7', rating: '4.0', distance: '2.9 km' }], Pharmacies: [{ name: '24Seven Pharmacy', position: [26.912, 75.787], cost: 'Open until 11 pm', rating: '4.2', distance: '0.4 km' }] }
+const colors = { Attractions: '#27a66f', Hotels: '#3b6ea5', Hospitals: '#d64b61', 'Police Stations': '#e9785f', Pharmacies: '#8b5cc7' }
 
 export default function Maps() {
 	const [visible, setVisible] = useState(Object.keys(points).reduce((all, key) => ({ ...all, [key]: true }), {}))
