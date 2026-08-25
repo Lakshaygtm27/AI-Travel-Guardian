@@ -6,6 +6,7 @@ from math import asin, cos, radians, sin, sqrt
 import httpx
 import requests
 from dotenv import load_dotenv
+from sqlalchemy import text
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 from fastapi import FastAPI, HTTPException
@@ -15,7 +16,7 @@ from pydantic import BaseModel, Field
 
 from app.services.itinerary_agent import generate_itinerary
 from app.services.budget_forecast import forecast_budget
-from app.database.connection import save_weather
+from app.database.connection import engine, save_weather
 from app.services.nearby_service import nearby_places
 from app.services.pdf_generator import generate_report
 from app.services.replanner import replan_trip
@@ -33,7 +34,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
+    allow_origins=["http://127.0.0.1:5173", "http://localhost:5173", "http://127.0.0.1:4173", "http://localhost:4173"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -64,6 +65,32 @@ def home():
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "AI Travel Guardian 360"}
+
+
+@app.get("/health/ollama")
+def ollama_health():
+    base_url = os.getenv("OLLAMA_BASE_URL", os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")).rstrip("/")
+    try:
+        response = httpx.get(f"{base_url}/api/tags", timeout=5)
+        response.raise_for_status()
+        models = [model.get("name", "") for model in response.json().get("models", [])]
+        configured_model = os.getenv("OLLAMA_MODEL", "llama3.2")
+        available = any(configured_model in model or model.startswith(configured_model.split(":")[0]) for model in models)
+        return {"status": "ok" if available else "degraded", "service": "ollama", "model": configured_model, "model_available": available}
+    except (httpx.HTTPError, ValueError) as error:
+        raise HTTPException(status_code=503, detail="Ollama is offline or unreachable.") from error
+
+
+@app.get("/health/database")
+def database_health():
+    if engine is None:
+        raise HTTPException(status_code=503, detail="Database is not configured.")
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        return {"status": "ok", "service": "database"}
+    except Exception as error:
+        raise HTTPException(status_code=503, detail="Database is unavailable.") from error
 
 
 @app.post("/api/itinerary")
