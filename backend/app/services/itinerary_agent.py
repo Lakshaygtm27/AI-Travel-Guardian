@@ -4,7 +4,7 @@ from ollama import Client
 
 
 def generate_itinerary(source_city: str, destination_city: str, days: int, budget: float) -> str:
-    client = Client(host=os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434"))
+    client = Client(host=os.getenv("OLLAMA_BASE_URL", os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")))
     prompt = f"""Create a practical {days}-day travel itinerary from {source_city} to {destination_city} with a total budget of ₹{budget:,.0f}.
 Use exactly this structure for every day:
 Day N

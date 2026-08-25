@@ -10,5 +10,7 @@ services:
         sync: false
       - key: OLLAMA_HOST
         sync: false
+      - key: OLLAMA_BASE_URL
+        sync: false
       - key: OLLAMA_MODEL
         value: llama3.2

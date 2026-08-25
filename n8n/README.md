@@ -8,3 +8,7 @@ Import these four JSON files into the n8n instance at http://localhost:5678.
 4. `04-trip-completed-journal.json`: webhook -> journal API -> saved text journal.
 
 The workflows are intentionally inactive until SMTP credentials and any production API URLs are configured in n8n. Webhook payloads should include `email`; weather payloads include `rain`; and budget payloads include `spent`, `budget`, and `email`.
+
+## Gmail SMTP
+
+Create a Gmail app password, then configure an n8n SMTP credential with host `smtp.gmail.com`, port `587`, secure `false`, username `SMTP_USER`, and password `SMTP_PASSWORD`. Keep these values in n8n credentials or environment variables; never commit them.

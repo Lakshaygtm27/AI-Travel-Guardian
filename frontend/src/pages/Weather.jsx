@@ -1,9 +1,9 @@
-import axios from 'axios'
 import { CloudRain, LoaderCircle, Wind } from 'lucide-react'
 import { useState } from 'react'
+import api from '../services/api'
 
 export default function Weather() {
   const [weather, setWeather] = useState(null); const [loading, setLoading] = useState(false); const [error, setError] = useState('')
-  const loadWeather = async () => { setLoading(true); setError(''); try { const response = await axios.post('http://127.0.0.1:8001/api/weather', { latitude: 26.9124, longitude: 75.7873 }); setWeather(response.data) } catch { setError('Weather data is unavailable right now.') } finally { setLoading(false) } }
+  const loadWeather = async () => { setLoading(true); setError(''); try { const response = await api.post('/api/weather', { latitude: 26.9124, longitude: 75.7873 }); setWeather(response.data) } catch { setError('Weather data is unavailable right now.') } finally { setLoading(false) } }
   return <><div className="page-heading"><div><p className="eyebrow">Plan around the forecast</p><h1>Weather watch</h1><p className="page-subtitle">Live conditions for your Jaipur itinerary.</p></div><button className="primary-button" type="button" onClick={loadWeather} disabled={loading}>{loading ? <LoaderCircle className="spin" size={16} /> : <CloudRain size={16} />}{loading ? 'Checking...' : 'Check forecast'}</button></div>{error && <p className="form-error">{error}</p>}{weather ? <><section className="weather-alert"><CloudRain size={22} /><div><strong>{weather.alert}</strong><span>Forecast updated just now</span></div></section><div className="weather-grid">{[['Tomorrow', weather.tomorrow.temperature, '°C', weather.tomorrow.rain, '% rain'],['Wind', weather.tomorrow.wind, ' km/h', 'Forecast', '']].map(([label, value, unit, detail, detailUnit]) => <article className="stat-card" key={label}><div className="stat-top"><span>{label}</span><Wind size={17} className="stat-icon" /></div><div className="stat-value">{value}{unit}</div><div className="stat-note">{detail}{detailUnit}</div></article>)}</div></> : <section className="panel"><div className="empty-visual"><div><CloudRain size={40} /><h2>Forecast on demand</h2><p>Check the latest rain and wind conditions before you set out.</p></div></div></section>}</>
 }

@@ -5,6 +5,16 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS destinations (
+    id SERIAL PRIMARY KEY,
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100),
+    country VARCHAR(100) NOT NULL,
+    safety_score INTEGER,
+    popularity_score INTEGER,
+    avg_budget NUMERIC(12, 2)
+);
+
 CREATE TABLE IF NOT EXISTS trips (
     id SERIAL PRIMARY KEY,
     user_name VARCHAR(120) NOT NULL,
@@ -25,10 +35,13 @@ CREATE TABLE IF NOT EXISTS hotels (
 
 CREATE TABLE IF NOT EXISTS attractions (
     id SERIAL PRIMARY KEY,
-    trip_id INTEGER NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
     name VARCHAR(180) NOT NULL,
-    city VARCHAR(120) NOT NULL,
-    visit_date DATE
+    city VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL DEFAULT 'India',
+    latitude FLOAT,
+    longitude FLOAT,
+    rating FLOAT,
+    cost NUMERIC(12, 2)
 );
 
 CREATE TABLE IF NOT EXISTS expenses (
@@ -55,6 +68,40 @@ CREATE TABLE IF NOT EXISTS weather_logs (
     rain FLOAT NOT NULL,
     wind FLOAT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS risk_scores (
+    id SERIAL PRIMARY KEY,
+    city VARCHAR(100) NOT NULL,
+    risk_score INTEGER NOT NULL,
+    risk_level VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS emergency_contacts (
+    id SERIAL PRIMARY KEY,
+    country VARCHAR(100) NOT NULL UNIQUE,
+    police VARCHAR(30) NOT NULL,
+    ambulance VARCHAR(30) NOT NULL,
+    fire VARCHAR(30) NOT NULL,
+    tourism VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS hospitals (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(180) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL DEFAULT 'India',
+    latitude FLOAT,
+    longitude FLOAT,
+    phone VARCHAR(30)
+);
+
+CREATE TABLE IF NOT EXISTS scams (
+    id SERIAL PRIMARY KEY,
+    city VARCHAR(100) NOT NULL,
+    scam VARCHAR(180) NOT NULL,
+    severity VARCHAR(20) NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS trips_destination_city_idx ON trips(destination_city);

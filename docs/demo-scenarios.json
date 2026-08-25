@@ -1,0 +1,7 @@
+[
+  {"name":"Jaipur starter","source_city":"Delhi","destination_city":"Jaipur","budget":10000,"days":3,"demo":"Generate itinerary, risk, weather, budget, scams, nearby hospital, SOS, replan"},
+  {"name":"Goa escape","source_city":"Mumbai","destination_city":"Goa","budget":20000,"days":5,"demo":"Compare beach itinerary costs and safety"},
+  {"name":"International pair","source_city":"Singapore","destination_city":"Bali","budget":45000,"days":6,"demo":"Show international emergency and weather context"},
+  {"name":"Lost tourist","source_city":"Jaipur","destination_city":"Jaipur","budget":10000,"days":1,"demo":"Open SOS, nearby police, hospital, and route"},
+  {"name":"Weather change","source_city":"Delhi","destination_city":"Jaipur","budget":10000,"days":3,"demo":"Set rain above threshold and replace Amber Fort with Albert Hall Museum"}
+]
