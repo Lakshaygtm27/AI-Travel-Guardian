@@ -1,0 +1,2 @@
+import { MapPinned, Navigation } from 'lucide-react'
+export default function Maps() { return <><div className="page-heading"><div><p className="eyebrow">Know your surroundings</p><h1>Maps</h1><p className="page-subtitle">Places worth a detour, saved in one view.</p></div><button className="primary-button" type="button"><Navigation size={16} /> Locate me</button></div><section className="panel"><div className="empty-visual"><div><MapPinned size={40} /><h2>Your travel map</h2><p>Map layers will appear when your first destination is saved.</p></div></div></section></> }
