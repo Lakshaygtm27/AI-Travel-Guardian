@@ -3,3 +3,9 @@
 \copy hospitals(name, city, country, latitude, longitude, phone) FROM 'database/hospitals.csv' WITH (FORMAT csv, HEADER true);
 \copy emergency_contacts(country, police, ambulance, fire, tourism) FROM 'database/emergency_contacts.csv' WITH (FORMAT csv, HEADER true);
 \copy scams(city, scam, severity) FROM 'database/scams.csv' WITH (FORMAT csv, HEADER true);
+
+INSERT INTO trips (source_city, destination_city, budget, days)
+VALUES
+	('Delhi', 'Jaipur', 10000, 3),
+	('Mumbai', 'Goa', 20000, 5),
+	('Singapore', 'Bali', 30000, 4);

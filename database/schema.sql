@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS destinations (
 
 CREATE TABLE IF NOT EXISTS trips (
     id SERIAL PRIMARY KEY,
-    user_name VARCHAR(120) NOT NULL,
+    user_name VARCHAR(120),
     source_city VARCHAR(120) NOT NULL,
     destination_city VARCHAR(120) NOT NULL,
     budget NUMERIC(12, 2) NOT NULL CHECK (budget >= 0),
