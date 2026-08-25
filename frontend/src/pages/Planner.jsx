@@ -3,8 +3,8 @@ import { useState } from 'react'
 import api from '../services/api'
 
 function diagnosticMessage(error) {
-
-	if (!error.response) return 'Backend Offline: cannot reach http://localhost:8002.'
+	if (!error.response && error.code === 'ECONNABORTED') return 'Network Error: backend request timed out.'
+	if (!error.response) return 'Backend Offline: cannot reach the configured API. Check VITE_API_URL and the backend terminal.'
 	if (error.response.status === 404) return 'API Route Missing: /api/itinerary was not found.'
 	if (error.response.status === 503 && error.response.data?.detail?.toLowerCase().includes('ollama')) return 'Ollama Offline: the backend cannot reach the AI model.'
 	if (error.response.status === 503 && error.response.data?.detail?.toLowerCase().includes('database')) return 'Database Unavailable: check the Supabase connection.'

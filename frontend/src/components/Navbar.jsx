@@ -1,13 +1,13 @@
 import { Bell, Compass } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import api from '../services/api'
+import { checkHealth } from '../services/api'
 
 export default function Navbar() {
   const [health, setHealth] = useState({ backend: false, ollama: false, database: false })
   useEffect(() => {
     let mounted = true
-    Promise.allSettled([api.get('/health'), api.get('/health/ollama'), api.get('/health/database')]).then((results) => {
-      if (mounted) setHealth({ backend: results[0].status === 'fulfilled', ollama: results[1].status === 'fulfilled', database: results[2].status === 'fulfilled' })
+    Promise.allSettled(['/health', '/health/ollama', '/health/database'].map(checkHealth)).then((results) => {
+      if (mounted) setHealth({ backend: results[0].status === 'fulfilled' && results[0].value === true, ollama: results[1].status === 'fulfilled' && results[1].value === true, database: results[2].status === 'fulfilled' && results[2].value === true })
     })
     return () => { mounted = false }
   }, [])
