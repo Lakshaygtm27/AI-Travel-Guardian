@@ -48,6 +48,15 @@ CREATE TABLE IF NOT EXISTS alerts (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS weather_logs (
+    id SERIAL PRIMARY KEY,
+    city VARCHAR(100) NOT NULL,
+    temperature FLOAT NOT NULL,
+    rain FLOAT NOT NULL,
+    wind FLOAT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS trips_destination_city_idx ON trips(destination_city);
 CREATE INDEX IF NOT EXISTS expenses_trip_id_idx ON expenses(trip_id);
 CREATE INDEX IF NOT EXISTS alerts_trip_id_idx ON alerts(trip_id);

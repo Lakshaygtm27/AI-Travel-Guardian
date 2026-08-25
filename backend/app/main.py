@@ -1,13 +1,33 @@
+import csv
+import os
+from contextlib import asynccontextmanager
 from math import asin, cos, radians, sin, sqrt
 
 import httpx
+import requests
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from app.services.itinerary_agent import generate_itinerary
+from app.services.budget_forecast import forecast_budget
+from app.database.connection import save_weather
+from app.services.nearby_service import nearby_places
+from app.services.pdf_generator import generate_report
+from app.services.replanner import replan_trip
+from app.services.risk_engine import calculate_risk
+from app.services.weather_service import fetch_weather
+from app.jobs.weather_scheduler import start_weather_scheduler
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    scheduler = start_weather_scheduler()
+    yield
+    scheduler.shutdown(wait=False)
+
+
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
@@ -78,3 +98,79 @@ def weather(request: WeatherRequest):
         return {"today": {"temperature": daily["temperature_2m_max"][0], "rain": daily["precipitation_probability_max"][0], "wind": daily["wind_speed_10m_max"][0]}, "tomorrow": tomorrow, "alert": "Rain expected tomorrow. Replace outdoor visit with museum visit." if tomorrow["rain"] >= 60 else "Weather looks good for outdoor plans tomorrow."}
     except (httpx.HTTPError, KeyError, IndexError) as error:
         raise HTTPException(status_code=503, detail="Weather service is temporarily unavailable.") from error
+
+
+@app.get("/risk-score/{city}")
+def risk_score(city: str):
+    return calculate_risk(city)
+
+
+@app.get("/weather/{city}")
+def city_weather(city: str):
+    try:
+        result = fetch_weather(city)
+        save_weather(result)
+        return result
+    except requests.RequestException as error:
+        raise HTTPException(status_code=503, detail="Weather service is temporarily unavailable.") from error
+
+
+@app.get("/nearby/{kind}")
+def nearby(kind: str, city: str = "Jaipur"):
+    if kind not in {"hospitals", "police", "pharmacy"}:
+        raise HTTPException(status_code=400, detail="kind must be hospitals, police, or pharmacy")
+    return {"city": city.title(), "places": nearby_places(kind, city)}
+
+
+def csv_rows(filename: str) -> list[dict]:
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "database", filename))
+    with open(path, newline="", encoding="utf-8") as file:
+        return list(csv.DictReader(file))
+
+
+@app.get("/scams/{city}")
+def scams(city: str):
+    return {"city": city.title(), "alerts": [row for row in csv_rows("scams.csv") if row["city"].lower() == city.lower()]}
+
+
+@app.get("/emergency/{country}")
+def emergency_contacts(country: str):
+    contacts = next((row for row in csv_rows("emergency_contacts.csv") if row["country"].lower() == country.lower()), None)
+    if not contacts:
+        raise HTTPException(status_code=404, detail="Country not found")
+    return contacts
+
+
+class BudgetForecastRequest(BaseModel):
+    total_spend: float = Field(ge=0)
+    days_completed: int = Field(gt=0)
+    total_trip_days: int = Field(gt=0)
+    budget: float = Field(ge=0)
+
+
+@app.get("/budget-forecast/{trip_id}")
+def budget_forecast(trip_id: int, total_spend: float = 6000, days_completed: int = 3, total_trip_days: int = 6, budget: float = 10000):
+    return {"trip_id": trip_id, **forecast_budget(total_spend, days_completed, total_trip_days, budget)}
+
+
+class ReplanRequest(BaseModel):
+    rain: float = Field(ge=0)
+    threshold: float = Field(default=50, ge=0)
+
+
+@app.post("/replan-trip")
+def replan(request: ReplanRequest):
+    return replan_trip(request.rain, request.threshold)
+
+
+class ReportRequest(BaseModel):
+    itinerary: str
+    budget_summary: str = "No budget summary provided."
+    risk_summary: str = "Risk score pending."
+    emergency_contacts: str = "India emergency: police 100, ambulance 102."
+
+
+@app.post("/api/trips/pdf")
+def trip_pdf(request: ReportRequest):
+    report = generate_report(request.itinerary, request.budget_summary, request.risk_summary, request.emergency_contacts)
+    return Response(content=report.read(), media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=travel-report.pdf"})
