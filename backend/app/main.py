@@ -1,4 +1,5 @@
 import csv
+import logging
 import os
 from contextlib import asynccontextmanager
 from math import asin, cos, radians, sin, sqrt
@@ -23,6 +24,8 @@ from app.services.replanner import replan_trip
 from app.services.risk_engine import calculate_risk
 from app.services.weather_service import fetch_weather
 from app.jobs.weather_scheduler import start_weather_scheduler
+
+logger = logging.getLogger("travel_guardian.api")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -95,10 +98,13 @@ def database_health():
 
 @app.post("/api/itinerary")
 def itinerary(request: ItineraryRequest):
+    logger.info("[TRIP] Request received source=%s destination=%s days=%s budget=%s", request.source_city, request.destination_city, request.days, request.budget)
     try:
-        return {"itinerary": generate_itinerary(**request.model_dump())}
+        result = generate_itinerary(**request.model_dump())
+        logger.info("[TRIP] Response returned source=%s", result.get("source"))
+        return {"trip": request.model_dump(), **result}
     except Exception as error:
-        raise HTTPException(status_code=503, detail="Ollama is unavailable. Start the local Ollama service and try again.") from error
+        raise HTTPException(status_code=500, detail="Itinerary service failed unexpectedly.") from error
 
 
 SERVICE_LOCATIONS = {
