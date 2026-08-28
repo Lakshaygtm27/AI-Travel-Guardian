@@ -15,6 +15,12 @@ CREATE TABLE IF NOT EXISTS destinations (
     avg_budget NUMERIC(12, 2)
 );
 
+ALTER TABLE destinations ADD COLUMN IF NOT EXISTS lat FLOAT;
+ALTER TABLE destinations ADD COLUMN IF NOT EXISTS lng FLOAT;
+ALTER TABLE destinations ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE destinations ADD COLUMN IF NOT EXISTS avg_daily_budget NUMERIC(12, 2);
+ALTER TABLE destinations ADD COLUMN IF NOT EXISTS tourism_score INTEGER;
+
 CREATE TABLE IF NOT EXISTS trips (
     id SERIAL PRIMARY KEY,
     user_name VARCHAR(120),
@@ -42,6 +48,22 @@ CREATE TABLE IF NOT EXISTS attractions (
     longitude FLOAT,
     rating FLOAT,
     cost NUMERIC(12, 2)
+);
+
+ALTER TABLE attractions ADD COLUMN IF NOT EXISTS category VARCHAR(80);
+ALTER TABLE attractions ADD COLUMN IF NOT EXISTS entry_fee NUMERIC(12, 2);
+ALTER TABLE attractions ADD COLUMN IF NOT EXISTS duration FLOAT;
+ALTER TABLE attractions ADD COLUMN IF NOT EXISTS opening_time VARCHAR(30);
+ALTER TABLE attractions ADD COLUMN IF NOT EXISTS closing_time VARCHAR(30);
+
+CREATE TABLE IF NOT EXISTS restaurants (
+    id SERIAL PRIMARY KEY,
+    city VARCHAR(100) NOT NULL,
+    name VARCHAR(180) NOT NULL,
+    rating FLOAT,
+    avg_cost NUMERIC(12, 2),
+    lat FLOAT,
+    lng FLOAT
 );
 
 CREATE TABLE IF NOT EXISTS expenses (
